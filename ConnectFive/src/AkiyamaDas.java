@@ -33,10 +33,26 @@ public class AkiyamaDas extends Player
                 for(int k = Board.Y_SIZE-1; k>=0; k--)
                 {
                     if (board.getBoard()[i][j][k] == Board.EMPTY)
-                        moves.add(new MoveGrades(new Move(i, j)));
+                        moves.add(new MoveGrades(new Move(i, j), k));
                 }
             }
         }
+
+        int count = 1;
+        int x, y, z = 0;
+        for(MoveGrades m : moves)
+        {
+            x = m.getMove().getX();
+            y = m.getY();
+            z = m.getMove().getZ();
+            //horizontal x
+            for(int i = x+1; i<Board.X_SIZE; i++)
+            {
+//                if(board.getBoard()[z][y][i] == )
+            }
+
+        }
+
 
 
 
