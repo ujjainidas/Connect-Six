@@ -3,6 +3,18 @@ import java.util.Random;
 
 public class AkiyamaDas extends Player
 {
+    public static final int FLAT = 4;
+    public static final int VERTICAL = 3;
+    public static final int VERT_DIAGONAL = 2;
+
+    public static final int ONE = 1;
+    public static final int TWO = 10;
+    public static final int THREE = 100;
+    public static final int FOUR = 1000;
+    public static final int FIVE = 10000;
+    public static final int SIX = 100000;
+
+
     private char letter;
     private String name;
 
@@ -48,8 +60,166 @@ public class AkiyamaDas extends Player
             //horizontal x
             for(int i = x+1; i<Board.X_SIZE; i++)
             {
-//                if(board.getBoard()[z][y][i] == )
+                if(board.getBoard()[z][y][i] == letter)
+                    count++;
+                else
+                    break;
             }
+            for(int i = x-1; i>=0; i--)
+            {
+                if(board.getBoard()[z][y][i] == letter)
+                    count++;
+                else
+                    break;
+            }
+            grade += (Math.pow(10, count-1)) * FLAT;
+
+            count = 1;
+            //horizontal z
+            for(int i = z+1; i<Board.Z_SIZE; i++)
+            {
+                if(board.getBoard()[i][y][x] == letter)
+                    count++;
+                else
+                    break;
+            }
+            for(int i = z-1; i>=0; i--)
+            {
+                if(board.getBoard()[i][y][x] == letter)
+                    count++;
+                else
+                    break;
+            }
+            grade += (Math.pow(10, count-1)) * FLAT;
+
+            count = 1;
+            //increasing diagonal x-z
+            for(int i = 1; i<= i+5; i++)
+            {
+                if(x+1 < Board.X_SIZE && z+1 < Board.Z_SIZE && board.getBoard()[z+1][y][x+1] == letter)
+                    count++;
+                else
+                    break;
+            }
+            for(int i = 1; i<= i+5; i++)
+            {
+                if(x-1 >= 0 && z-1 >= 0 && board.getBoard()[z-1][y][x-1] == letter)
+                    count++;
+                else
+                    break;
+            }
+
+            count=1;
+            //decreasing diagonal x-z
+            for(int i = 1; i<= i+5; i++)
+            {
+                if(x+1 < Board.X_SIZE && z-1 >= 0 && board.getBoard()[z-1][y][x+1] == letter)
+                    count++;
+                else
+                    break;
+            }
+            for(int i = 1; i<= i+5; i++)
+            {
+                if(x-1 >= 0 && z+1 < Board.Z_SIZE && board.getBoard()[z+1][y][x-1] == letter)
+                    count++;
+                else
+                    break;
+            }
+
+            grade += (Math.pow(10, count-1)) * FLAT;
+
+            count=1;
+            //vertical
+            for(int i = y+1; i<Board.Y_SIZE; i++)
+            {
+                if(board.getBoard()[z][i][x] == letter)
+                    count++;
+                else
+                    break;
+            }
+            for(int i = y-1; i >= 0; i++)
+            {
+                if(board.getBoard()[z][i][x] == letter)
+                    count++;
+                else
+                    break;
+            }
+            grade += (Math.pow(10, count-1)) * VERTICAL;
+
+            count=1;
+            //diagonal x-y
+            for(int i = 1; i < i+5; i++)
+            {
+                if(x+i < board.X_SIZE && y+i < board.Y_SIZE && board.getBoard()[z][y+i][x+i] == letter)
+                    count++;
+                else
+                    break;
+            }
+            for(int i = 1; i < i+5; i++)
+            {
+                if(x-i >=0 && y+i >=0 && board.getBoard()[z][y+i][x+i] == letter)
+                    count++;
+                else
+                    break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
+
+            count = 1;
+            //other x-y diagonal
+            for(int i = 1; i < i+5; i++)
+            {
+                if(x+i < board.X_SIZE && y-i >= 0 && board.getBoard()[z][y-i][x+i] == letter)
+                    count++;
+                else
+                    break;
+            }
+            for(int i = 1; i < i+5; i++)
+            {
+                if(x-i >= 0 && y+i < board.Y_SIZE && board.getBoard()[z][y+i][x-i] == letter)
+                    count++;
+                else
+                    break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
+
+            count = 1;
+            //z-y diagonal
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z+i < board.Z_SIZE && y+i < board.Y_SIZE && board.getBoard()[z+i][y+i][x] == letter)
+                    count++;
+                else break;
+            }
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z-i >= 0 && y-i >= 0 && board.getBoard()[z-i][y-i][x] == letter)
+                    count++;
+                else break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
+
+            count=1;
+            //z-y other diagonal
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z+i < board.Z_SIZE && y-i >= 0 && board.getBoard()[z+i][y-i][x] == letter)
+                    count++;
+                else break;
+            }
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z-i >= 0 && y+i < board.Y_SIZE && board.getBoard()[z-i][y+i][x] == letter)
+                    count++;
+                else break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
+
+            count = 1;
+            //special diagonal all increasing
+
+
+
+
 
         }
 
