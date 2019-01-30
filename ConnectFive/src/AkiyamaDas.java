@@ -34,6 +34,7 @@ public class AkiyamaDas extends Player
 //        return m;
 
         ArrayList<MoveGrades> moves = new ArrayList<MoveGrades>();
+        ArrayList<MoveGrades> movesOne = new ArrayList<MoveGrades>();
 
 //        int level = 0;
         int grade = 0;
@@ -52,11 +53,12 @@ public class AkiyamaDas extends Player
 
         int count = 1;
         int x, y, z = 0;
-        for(MoveGrades m : moves)
+        int largestGrade = 0;
+        for(int j = 0; j<moves.size(); j++)
         {
-            x = m.getMove().getX();
-            y = m.getY();
-            z = m.getMove().getZ();
+            x = moves.get(j).getMove().getX();
+            y = moves.get(j).getY();
+            z = moves.get(j).getMove().getZ();
             //horizontal x
             for(int i = x+1; i<Board.X_SIZE; i++)
             {
@@ -216,12 +218,87 @@ public class AkiyamaDas extends Player
 
             count = 1;
             //special diagonal all increasing
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i <Board.X_SIZE && board.getBoard()[z+i][y+i][x] == letter)
+                    count++;
+                else break;
+            }
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z-i >= 0 && y-i >= 0 && x-i >= 0 && board.getBoard()[z-i][y-i][x] == letter)
+                    count++;
+                else break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
 
+            count = 1;
+            //special diagonal all increasing except x
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && board.getBoard()[z+i][y+i][x] == letter)
+                    count++;
+                else break;
+            }
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z-i >= 0 && y-i >= 0 && x+i < Board.X_SIZE && board.getBoard()[z-i][y-i][x] == letter)
+                    count++;
+                else break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
 
+            count = 1;
+            //special diagonal all decreasing except y
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && board.getBoard()[z+i][y+i][x] == letter)
+                    count++;
+                else break;
+            }
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && board.getBoard()[z-i][y-i][x] == letter)
+                    count++;
+                else break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
 
+            count = 1;
+            //special diagonal all increasing except z
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z-i >= 0 && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && board.getBoard()[z+i][y+i][x] == letter)
+                    count++;
+                else break;
+            }
+            for(int i = 1; i < 1+5; i++)
+            {
+                if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && board.getBoard()[z-i][y-i][x] == letter)
+                    count++;
+                else break;
+            }
+            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
+
+            moves.set(j, new MoveGrades(moves.get(j).getMove(), moves.get(j).getY(), grade));
+
+            for(int m = 0; m<4; m++)
+            {
+                for(int k = moves.size()-1; k >=0; k--)
+                {
+                    if(moves.get(k).getGrade() > moves.get(largestGrade).getGrade())
+                        largestGrade = k;
+                }
+                movesOne.add(new Move(moves.get(largestGrade).getMove(), moves.get(largestGrade).getY(), moves.get(largestGrade).getGrade()))
+                moves.remove(largestGrade);
+            }
 
 
         }
+
+
+
+
 
 
 
