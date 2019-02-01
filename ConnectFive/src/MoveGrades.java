@@ -7,15 +7,15 @@ public class MoveGrades
 
     public MoveGrades(Move m, int y, int grade)
     {
-        this.m=m;
+        this.m = m;
         this.y = y;
         this.grade=grade;
     }
 
     public MoveGrades(Move m, int y)
     {
-        this.y = y;
         this.m = m;
+        this.y = y;
         grade = 0;
     }
 

@@ -20,7 +20,7 @@ public class AkiyamaDas extends Player
 
     public AkiyamaDas(char letter)
     {
-        super("Random Computer",letter);
+        super("My AI",letter);
     }
 
     public Move getMove(Board board)
@@ -34,19 +34,22 @@ public class AkiyamaDas extends Player
 //        return m;
 
         ArrayList<MoveGrades> moves = new ArrayList<MoveGrades>();
-        ArrayList<MoveGrades> movesOne = new ArrayList<MoveGrades>();
+//        ArrayList<MoveGrades> movesOne = new ArrayList<MoveGrades>();
 
 //        int level = 0;
         int grade = 0;
         Location l;
-        for(int i = 0; i<board.getBoard().length; i++)
+        for(int i = 0; i<Board.Z_SIZE; i++)
         {
-            for(int j = 0; j<board.getBoard()[i][0].length; j++)
+            for(int j = 0; j<Board.X_SIZE; j++)
             {
-                for(int k = Board.Y_SIZE-1; k>=0; k--)
+                for(int k = 0; k<Board.Y_SIZE; k++)
                 {
-                    if (board.getBoard()[i][j][k] == Board.EMPTY)
+                    if (board.getBoard()[i][k][j] == Board.EMPTY)
+                    {
                         moves.add(new MoveGrades(new Move(i, j), k));
+                        break;
+                    }
                 }
             }
         }
@@ -152,14 +155,14 @@ public class AkiyamaDas extends Player
             //diagonal x-y
             for(int i = 1; i < i+5; i++)
             {
-                if(x+i < board.X_SIZE && y+i < board.Y_SIZE && board.getBoard()[z][y+i][x+i] == letter)
+                if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && board.getBoard()[z][y+i][x+i] == letter)
                     count++;
                 else
                     break;
             }
             for(int i = 1; i < i+5; i++)
             {
-                if(x-i >=0 && y+i >=0 && board.getBoard()[z][y+i][x+i] == letter)
+                if(x-i >=0 && y-i >=0 && board.getBoard()[z][y-i][x-i] == letter)
                     count++;
                 else
                     break;
@@ -252,13 +255,13 @@ public class AkiyamaDas extends Player
             //special diagonal all decreasing except y
             for(int i = 1; i < 1+5; i++)
             {
-                if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && board.getBoard()[z+i][y+i][x] == letter)
+                if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && board.getBoard()[z-i][y+i][x-i] == letter)
                     count++;
                 else break;
             }
             for(int i = 1; i < 1+5; i++)
             {
-                if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && board.getBoard()[z-i][y-i][x] == letter)
+                if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && board.getBoard()[z+i][y-i][x+i] == letter)
                     count++;
                 else break;
             }
@@ -268,7 +271,7 @@ public class AkiyamaDas extends Player
             //special diagonal all increasing except z
             for(int i = 1; i < 1+5; i++)
             {
-                if(z-i >= 0 && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && board.getBoard()[z+i][y+i][x] == letter)
+                if(z-i >= 0 && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && board.getBoard()[z-i][y+i][x+i] == letter)
                     count++;
                 else break;
             }
@@ -282,18 +285,19 @@ public class AkiyamaDas extends Player
 
             moves.set(j, new MoveGrades(moves.get(j).getMove(), moves.get(j).getY(), grade));
 
-            for(int m = 0; m<4; m++)
+
+
+
+        }
+
+        MoveGrades bestMove = null;
+        for(int i = 0; i<moves.size(); i++)
+        {
+            if(moves.get(i).getGrade() > moves.get(largestGrade).getGrade())
             {
-                for(int k = moves.size()-1; k >=0; k--)
-                {
-                    if(moves.get(k).getGrade() > moves.get(largestGrade).getGrade())
-                        largestGrade = k;
-                }
-                movesOne.add(new Move(moves.get(largestGrade).getMove(), moves.get(largestGrade).getY(), moves.get(largestGrade).getGrade()))
-                moves.remove(largestGrade);
+                largestGrade = i;
+                bestMove = moves.get(i);
             }
-
-
         }
 
 
@@ -304,7 +308,7 @@ public class AkiyamaDas extends Player
 
 
 
-        return new Move(0,0);//just to stop the error, will be removed later
+        return new Move(bestMove.getMove().getX(),bestMove.getMove().getZ());//no look ahead, just best move
     }
 
 
