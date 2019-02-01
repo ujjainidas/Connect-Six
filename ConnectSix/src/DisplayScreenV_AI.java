@@ -11,7 +11,6 @@ public class DisplayScreenV_AI extends JFrame implements Runnable
 	public DisplayScreenV_AI(Board board)
 	{
 		super();
-		setAlwaysOnTop(true);
 		this.board = board;
 		setSize(220,920);
 		img = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_INT_ARGB);

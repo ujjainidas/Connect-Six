@@ -12,7 +12,7 @@ public class Board
     int timer = 0;
     char winner = '-'; // 'R', '-', 'B', 'T'
     String winType ="";
-    int needed=5;
+    int needed=6;
     Color redWin = Color.red, blueWin = Color.blue;
 
     public Board()
@@ -104,7 +104,7 @@ public class Board
             else
                 break;
 
-        if(hCount==needed){
+        if(hCount>=needed){
             winType="Horizontal";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -135,7 +135,7 @@ public class Board
                 bCount++;
             else
                 break;
-        if(bCount==needed){
+        if(bCount>=needed){
             winType="depth";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -164,7 +164,7 @@ public class Board
                 uCount++;
             else
                 break;
-        if(uCount==needed){
+        if(uCount>=needed){
             winType="Up";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -181,6 +181,7 @@ public class Board
             return placedAt;
         }
 
+
 // diagonals on the x-plane
     // both increasing
         int idc=1;
@@ -195,7 +196,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winType="x-plane diagonal #1";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -224,7 +225,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winType="x-plane diagonal #2";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -256,7 +257,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winner=c;
             winType="y-plane diagonal #1";
             char lowerCase = Character.toLowerCase(c);
@@ -285,7 +286,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winType="y-plane diagonal #2";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -317,7 +318,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winType="z-plane diagonal #1";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -346,7 +347,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winType="z-plane diagonal #2";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -377,7 +378,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winType="special diagonal #1 + + +";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -407,7 +408,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winner=c;
             winType="special diagonal #2 + + -";
             char lowerCase = Character.toLowerCase(c);
@@ -437,7 +438,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winner=c;
             winType="special diagonal #3 - + -";
             char lowerCase = Character.toLowerCase(c);
@@ -467,7 +468,7 @@ public class Board
             else
                 break;
 
-        if(idc==needed){
+        if(idc>=needed){
             winType="special diagonal #4 - + +";
             winner=c;
             char lowerCase = Character.toLowerCase(c);
@@ -504,7 +505,7 @@ public class Board
             if(board[m.getZ()][y][m.getX()]=='-')
             {
                 board[m.getZ()][y][m.getX()] = c;
-                placedAt =  new Location(m.getX(),y,m.getX());
+                placedAt =  new Location(m.getX(),y,m.getZ());
                 break;
             }
         return placedAt;

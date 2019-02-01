@@ -2,9 +2,6 @@ import java.util.Random;
 
 public class RandomComputer extends Player
 {
-	private char letter;
-	private String name;
-
 	public RandomComputer(char letter)
 	{
 		super("Random Computer",letter);
@@ -25,6 +22,6 @@ public class RandomComputer extends Player
 	
 	public Player freshCopy()
 	{
-		return new RandomComputer(letter);
+		return new RandomComputer(getLetter());
 	}
 }

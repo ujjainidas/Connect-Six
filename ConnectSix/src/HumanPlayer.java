@@ -2,9 +2,6 @@ import java.util.Scanner;
 
 public class HumanPlayer extends Player
 {
-    private char letter;
-    private String name;
-
     public HumanPlayer(String name,char letter)
     {
         super(name, letter);
@@ -33,6 +30,6 @@ public class HumanPlayer extends Player
 
     public Player freshCopy()
     {
-        return new RandomComputer(letter);
+        return new RandomComputer(getLetter());
     }
 }

@@ -8,7 +8,7 @@ public class Servers_Listener implements Runnable
 	private ObjectOutputStream os;
 	
 	// board
-	private Board board= new Board();
+	private Board board= new Board();;
 	
 	// selected opponent
 	private Player opponentAsRed;
