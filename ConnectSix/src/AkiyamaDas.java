@@ -22,7 +22,7 @@ public class AkiyamaDas extends Player
 
     public AkiyamaDas(char letter)
     {
-        super("My AI",letter);
+        super("AkiyamaDas",letter);
     }
 
     public Move getMove(Board board)
