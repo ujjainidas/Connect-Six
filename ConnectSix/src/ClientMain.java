@@ -17,12 +17,12 @@ public class ClientMain
 	public static void main(String[] args)
 	{
 		Scanner keyboard = new Scanner(System.in);
-		
+
 		Board board=new Board();
 		Move m;
 		DisplayScreenV_AI ds = new DisplayScreenV_AI(board);
 		int mode = 0;
-		
+
 		//PlayerInt myAIasRed = new HumanPlayer('R',"Tully");
 		//PlayerInt myAIasBlue = new HumanPlayer('B',"Tully");
 		Player myAIasRed = new AkiyamaDas('R');
@@ -30,7 +30,7 @@ public class ClientMain
 		String myAI_Name = myAIasRed.getName();
 		String opponentName = "";
 		Player currentlyPlaying = null;
-		
+
 		while(true)
 		{
 			do
@@ -41,74 +41,74 @@ public class ClientMain
 				System.out.print("Enter selection: ");
 				mode = keyboard.nextInt();
 			}while(mode < 1 || mode > 2);
-			
+
 			if(mode == 1)
 			{
 				scores = new PlayerScores();
 				try
 				{
-				
+
 					Socket connectionToServer = new Socket(ip,port);
-				
-					ObjectInputStream is = new 
+
+					ObjectInputStream is = new
 						ObjectInputStream(connectionToServer.getInputStream());
-							
-					ObjectOutputStream os = new 
+
+					ObjectOutputStream os = new
 						ObjectOutputStream(connectionToServer.getOutputStream());
-	
+
 					board.reset();
 					while(true)
 					{
 						os.writeObject(new Command_To_Server(Command_To_Server.NEW_MATCH,myAI_Name));
 						os.reset();
-						
+
 						Command_From_Server categoriesFromSever = (Command_From_Server)is.readObject();
 						ArrayList<String> categories = (ArrayList<String>)categoriesFromSever.getCommandData();
-						
+
 						int spot = 0;
-						
+
 						do
 						{
 							System.out.println("\n-Select an AI Category-");
 							for(int x = 0; x<categories.size();x++)
 							{
-								System.out.println(x+"."+ categories.get(x));	
+								System.out.println(x+"."+ categories.get(x));
 							}
 							System.out.print("Enter selection:");
 							spot =keyboard.nextInt();
 						}while(spot>=categories.size());
-						
+
 						os.writeObject(new Command_To_Server(Command_To_Server.SELECT_CATEGORY,spot));
 						os.reset();
-						
+
 						Command_From_Server aiListFromSever = (Command_From_Server)is.readObject();
 						ArrayList<String> aiList = (ArrayList<String>)aiListFromSever.getCommandData();
-						
+
 						spot = 0;
-						
+
 						do
 						{
 							System.out.println("\n-Select an AI-");
 							for(int x = 0; x<aiList.size();x++)
 							{
-								System.out.println(x+"."+ aiList.get(x));	
+								System.out.println(x+"."+ aiList.get(x));
 							}
 							System.out.print("Enter selection:");
 							spot = keyboard.nextInt();
 						}while(spot>=aiList.size());
-						
+
 						os.writeObject(new Command_To_Server(Command_To_Server.SELECT_AI,spot));
 						os.reset();
 						opponentName = aiList.get(spot);
-						
-						
+
+
 						// play full games list
 						while(true)
 						{
 							//System.out.println("waiting for command");
 							Command_From_Server comFromServer = (Command_From_Server)is.readObject();
 							//System.out.println("com from server"+ comFromServer.getCommand());
-							
+
 							if(comFromServer.getCommand()==Command_From_Server.START_PLAYER_FIRST_GAMES)
 							{
 								board.reset();
@@ -136,14 +136,14 @@ public class ClientMain
 							{
 								System.out.println("Your AI failed to provide a valid move!!!");
 								Thread.sleep(moveSleepTime);
-								
+
 							}
 							else if(comFromServer.getCommand()==Command_From_Server.OPPONENT_MOVE)
 							{
 								//System.out.println("Comp moved to "+(Location)comFromServer.getCommandData());
 								board.makeMove((Move)comFromServer.getCommandData(),getOpponentLetter(currentlyPlaying.getLetter()));
 								Thread.sleep(moveSleepTime);
-								
+
 							}
 							else if(comFromServer.getCommand()==Command_From_Server.OPPONENT_FAILED_TO_MOVE)
 							{
@@ -165,7 +165,7 @@ public class ClientMain
 								Thread.sleep(endSleepTime);
 								scores.addLoss();
 								board.reset();
-								
+
 							}
 							else if(comFromServer.getCommand()==Command_From_Server.TIE)
 							{
@@ -182,7 +182,7 @@ public class ClientMain
 								os.reset();
 								os.writeObject(new Command_To_Server(Command_To_Server.MOVE,m));
 								os.reset();
-								
+
 							}
 							else if(comFromServer.getCommand()==Command_From_Server.MATCHES_COMPLETE)
 							{
@@ -193,13 +193,13 @@ public class ClientMain
 								Thread.sleep(endSleepTime);
 								break;
 							}
-							
+
 						}
 						break;
-							
+
 					}
-					
-					
+
+
 				}
 				catch(Exception e)
 				{
@@ -213,7 +213,6 @@ public class ClientMain
 				System.exit(0);
 			}
 		}
-		
 	}
 	
 	public static char getOpponentLetter(char self)
