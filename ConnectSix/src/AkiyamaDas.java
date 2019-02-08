@@ -19,363 +19,430 @@ public class AkiyamaDas extends Player
     private char letter;
     private String name;
     private char[][][] locBoard;
+    private boolean goesFirst;
+    private int turnNum;
 
     public AkiyamaDas(char letter)
     {
         super("AkiyamaDas",letter);
+        turnNum = 0;
+        goesFirst = false;
     }
 
+    /**
+     * calls the recursive method to calculate the move
+     * @param board the current board of the game
+     * @return what recurive method returns
+     */
     public Move getMove(Board board)
     {
+        char[][][] temp = board.getBoard();
+        turnNum++;
         locBoard = board.getBoard();
 
         ArrayList<MoveGrades> moves = new ArrayList<MoveGrades>();
 
-        int grade = 0;
-        Location l;
-        for(int i = 0; i<Board.Z_SIZE; i++)
-        {
-            for(int j = 0; j<Board.X_SIZE; j++)
-            {
-                for(int k = 0; k<Board.Y_SIZE; k++)
-                {
-                    if (locBoard[i][k][j] == Board.EMPTY)
-                    {
-                        moves.add(new MoveGrades(new Move(i, j), k));
-                        break;
-                    }
-                }
-            }
-        }
-
-        int count = 1;
-        int x, y, z = 0;
-        int largestGrade = 0;
-
-        for(int j = 0; j<moves.size(); j++)
-        {
-            grade = 0;
-            x = moves.get(j).getX();
-            y = moves.get(j).getY();
-            z = moves.get(j).getZ();
-            //horizontal x
-            for(int i = x+1; i<Board.X_SIZE; i++)
-            {
-                if(locBoard[z][y][i] == letter)
-                    count++;
-                else
-                    break;
-            }
-            for(int i = x-1; i>=0; i--)
-            {
-                if(locBoard[z][y][i] == letter)
-                    count++;
-                else
-                    break;
-            }
-            grade += (Math.pow(10, count-1)) * FLAT;
-
-            count = 1;
-            //horizontal z
-            for(int i = z+1; i<Board.Z_SIZE; i++)
-            {
-                if(locBoard[i][y][x] == letter)
-                    count++;
-                else
-                    break;
-            }
-            for(int i = z-1; i>=0; i--)
-            {
-                if(locBoard[i][y][x] == letter)
-                    count++;
-                else
-                    break;
-            }
-            grade += (Math.pow(10, count-1)) * FLAT;
-
-            count = 1;
-            //increasing diagonal x-z
-            for(int i = 1; i<= i+5; i++)
-            {
-                if(x+1 < Board.X_SIZE && z+1 < Board.Z_SIZE && locBoard[z+1][y][x+1] == letter)
-                    count++;
-                else
-                    break;
-            }
-            for(int i = 1; i<= i+5; i++)
-            {
-                if(x-1 >= 0 && z-1 >= 0 && locBoard[z-1][y][x-1] == letter)
-                    count++;
-                else
-                    break;
-            }
-
-            count=1;
-            //decreasing diagonal x-z
-            for(int i = 1; i<= i+5; i++)
-            {
-                if(x+1 < Board.X_SIZE && z-1 >= 0 && locBoard[z-1][y][x+1] == letter)
-                    count++;
-                else
-                    break;
-            }
-            for(int i = 1; i<= i+5; i++)
-            {
-                if(x-1 >= 0 && z+1 < Board.Z_SIZE && locBoard[z+1][y][x-1] == letter)
-                    count++;
-                else
-                    break;
-            }
-            grade += (Math.pow(10, count-1)) * FLAT;
-
-            count=1;
-            //vertical
-            for(int i = y+1; i<Board.Y_SIZE; i++)
-            {
-                if(locBoard[z][i][x] == letter)
-                    count++;
-                else
-                    break;
-            }
-            for(int i = y-1; i >= 0; i++)
-            {
-                if(locBoard[z][i][x] == letter)
-                    count++;
-                else
-                    break;
-            }
-            grade += (Math.pow(10, count-1)) * VERTICAL;
-
-            count=1;
-            //diagonal x-y
-            for(int i = 1; i < i+5; i++)
-            {
-                if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && locBoard[z][y+i][x+i] == letter)
-                    count++;
-                else
-                    break;
-            }
-            for(int i = 1; i < i+5; i++)
-            {
-                if(x-i >=0 && y-i >=0 && locBoard[z][y-i][x-i] == letter)
-                    count++;
-                else
-                    break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            count = 1;
-            //other x-y diagonal
-            for(int i = 1; i < i+5; i++)
-            {
-                if(x+i < board.X_SIZE && y-i >= 0 && locBoard[z][y-i][x+i] == letter)
-                    count++;
-                else
-                    break;
-            }
-            for(int i = 1; i < i+5; i++)
-            {
-                if(x-i >= 0 && y+i < board.Y_SIZE && locBoard[z][y+i][x-i] == letter)
-                    count++;
-                else
-                    break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            count = 1;
-            //z-y diagonal
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z+i < board.Z_SIZE && y+i < board.Y_SIZE && locBoard[z+i][y+i][x] == letter)
-                    count++;
-                else break;
-            }
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z-i >= 0 && y-i >= 0 && locBoard[z-i][y-i][x] == letter)
-                    count++;
-                else break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            count=1;
-            //z-y other diagonal
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z+i < board.Z_SIZE && y-i >= 0 && locBoard[z+i][y-i][x] == letter)
-                    count++;
-                else break;
-            }
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z-i >= 0 && y+i < board.Y_SIZE && locBoard[z-i][y+i][x] == letter)
-                    count++;
-                else break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            count = 1;
-            //special diagonal all increasing
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i <Board.X_SIZE && locBoard[z+i][y+i][x] == letter)
-                    count++;
-                else break;
-            }
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z-i >= 0 && y-i >= 0 && x-i >= 0 && locBoard[z-i][y-i][x] == letter)
-                    count++;
-                else break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            count = 1;
-            //special diagonal all increasing except x
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && locBoard[z+i][y+i][x] == letter)
-                    count++;
-                else break;
-            }
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z-i >= 0 && y-i >= 0 && x+i < Board.X_SIZE && locBoard[z-i][y-i][x] == letter)
-                    count++;
-                else break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            count = 1;
-            //special diagonal all decreasing except y
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && locBoard[z-i][y+i][x-i] == letter)
-                    count++;
-                else break;
-            }
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && locBoard[z+i][y-i][x+i] == letter)
-                    count++;
-                else break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            count = 1;
-            //special diagonal all increasing except z
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z-i >= 0 && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && locBoard[z-i][y+i][x+i] == letter)
-                    count++;
-                else break;
-            }
-            for(int i = 1; i < 1+5; i++)
-            {
-                if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && locBoard[z-i][y-i][x] == letter)
-                    count++;
-                else break;
-            }
-            grade += (Math.pow(10, count-1)) * VERT_DIAGONAL;
-
-            moves.set(j, new MoveGrades(moves.get(j), moves.get(j).getY(), grade));
-        }
-
-        //to beat straight-line, remove after adding look-ahead
-        Move bestMove = null;
-        char opponent = (letter == Board.BLUE)? Board.RED : Board.BLUE;
-        int oppCount = 0;
-        int notFilled = 0;
         for(int i = 0; i<Board.Z_SIZE; i++)
         {
             for(int j = 0; j<Board.Y_SIZE; j++)
             {
                 for(int k = 0; k<Board.X_SIZE; k++)
                 {
-                    //increase x
-                    if(locBoard[i][j][k] == opponent && k <= 2)
+                    if (locBoard[i][j][k] == Board.EMPTY)
                     {
-                        for(int a = k; a < Board.X_SIZE; a++)
-                        {
-                            if(locBoard[i][j][a] == opponent) oppCount++;
-                            else notFilled = a;
-                        }
-                        if(oppCount == 5 && (j == 0 || locBoard[i][j-1][notFilled] == '-'))
-                             return new Move(notFilled, i);
+                        continue;
                     }
-
-                    //decrease x
-                    if(locBoard[i][j][k] == opponent && k >=6)
+                    else
                     {
-                        for(int a = k; a >= 0; a--)
-                        {
-                            if(locBoard[i][j][a] == opponent) oppCount++;
-                            else notFilled = a;
-                        }
-                        if(oppCount == 5 && (j == 0 || locBoard[i][j-1][notFilled] == '-'))
-                            return new Move(notFilled, i);
-                    }
-
-                    //increase y
-                    if(locBoard[i][j][k] == opponent && j <= 1)
-                    {
-                        for(int a = j; a < Board.Y_SIZE; a++)
-                        {
-                            if(locBoard[i][a][k] == opponent) oppCount++;
-                            else notFilled = a;
-                        }
-                        if(oppCount == 5 && (notFilled == 0 || locBoard[i][notFilled-1][k] == '-'))
-                            return new Move(k, i);
-                    }
-
-                    //decrease y
-                    if(locBoard[i][j][k] == opponent && j >=6)
-                    {
-                        for(int a = j; a >= 0; a--)
-                        {
-                            if(locBoard[i][a][k] == opponent) oppCount++;
-                            else notFilled = a;
-                        }
-                        if(oppCount == 5 && (notFilled == 0 || locBoard[i][notFilled-1][k] == '-'))
-                            return new Move(k, i);
-                    }
-
-                    //increase z
-                    if(locBoard[i][j][k] == opponent && i <= 2)
-                    {
-                        for(int a = i; a < Board.Z_SIZE; a++)
-                        {
-                            if(locBoard[a][j][k] == opponent) oppCount++;
-                            else notFilled = a;
-                        }
-                        if(oppCount == 5 && (j == 0 || locBoard[notFilled][j-1][k] == '-'))
-                            return new Move(k, notFilled);
-                    }
-
-                    //decrease z
-                    if(locBoard[i][j][k] == opponent && i >=6)
-                    {
-                        for(int a = i; a >= 0; a--)
-                        {
-                            if(locBoard[a][j][k] == opponent) oppCount++;
-                            else notFilled = a;
-                        }
-                        if(oppCount == 5 && (j == 0 || locBoard[notFilled][j-1][k] == '-'))
-                            return new Move(k, notFilled);
+                        if(turnNum == 1)
+                            goesFirst = false;
                     }
                 }
             }
         }
 
-        for(int i = 0; i<moves.size(); i++)
+        for(int i = 0; i<Board.Z_SIZE; i++)
         {
-            if(moves.get(i).getGrade() > moves.get(largestGrade).getGrade())
+            for (int j = 0; j < Board.X_SIZE; j++)
             {
-                largestGrade = i;
-                bestMove = moves.get(i);
+                for(int k = 0; k < Board.Y_SIZE; k++)
+                {
+                    if(locBoard[i][j][k] == Board.EMPTY)
+                    {
+                        moves.add(new MoveGrades(new Move(j, i), k));
+                        break;
+                    }
+                }
             }
         }
+
+        int largestGrade = 0;
+        Move bestMove = null;
+        for(MoveGrades m : moves)
+        {
+            temp[m.getZ()][m.getY()][m.getX()] = letter;
+            if(getGrade(temp, letter) > largestGrade)
+            {
+                bestMove = new Move(m.getX(), m.getZ());
+                largestGrade = getGrade(temp, letter);
+            }
+
+        }
+
+
+//        for(int i = moves.size()-1; i>=0; i++)
+//        {
+//            if(moves.get(i).getX() > 0 && locBoard[moves.get(i).getZ()][moves.get(i).getY()][moves.get(i).getX()-1] == Board.EMPTY)
+//            {
+//                if(moves.get(i).getX() < Board.X_SIZE && locBoard[moves.get(i).getZ()][moves.get(i).getY()][moves.get(i).getX()+1] == Board.EMPTY)
+//                {
+//                    if(moves.get(i).getZ() > 0 && locBoard[moves.get(i).getZ()-1][moves.get(i).getY()][moves.get(i).getX()] == Board.EMPTY)
+//                    {
+//
+//                    }
+//                }
+//            }
+//        }
+
         return new Move(bestMove.getX(),bestMove.getZ());//no look ahead, just best move
+    }
+
+    public Move calculateMove(Board board, int layers)
+    {
+        //from board and valid moves, calulate grade for each one
+        //for best 4 grades, call calculateMove with layers +1
+        //once reaches 2, break, store arraylist of all grades in last layer, calulate highest grade and send to getMove()
+
+        return new Move(0, 0);
+    }
+
+    public int getGrade(char[][][] array, char player)
+    {
+        int grade = 0;
+        int count = 0;
+
+        for(int z = 0; z<array.length; z++)
+        {
+            for(int y = 0; y<array[0].length; y++)
+            {
+                for(int x = 0; x<array[0][0].length; x++)
+                {
+                    //increasing x
+                    if(x <= 2)
+                    {
+                        for(int i = x; i<Board.X_SIZE; i++)
+                        {
+                            if(array[z][y][i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //decreasing x
+                    if(x >= 5)
+                    {
+                        for(int i = x; i >= 0; i--)
+                        {
+                            if(array[z][y][i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //increasing z
+                    if(z <= 2)
+                    {
+                        for(int i = z; i<Board.Z_SIZE; i++)
+                        {
+                            if(array[i][y][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //decreasing z
+                    if(z >= 5)
+                    {
+                        for(int i = z; i >= 0; i--)
+                        {
+                            if(array[i][y][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //increasing y
+                    if(y <= 1)
+                    {
+                        for(int i = y; i<Board.Y_SIZE; i++)
+                        {
+                            if(array[z][i][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERTICAL;
+                    count = 0;
+
+                    //decreasing y
+                    if(y >= 5)
+                    {
+                        for(int i = y; i >= 0; i--)
+                        {
+                            if(array[z][i][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERTICAL;
+                    count = 0;
+
+                    //increasing xz
+                    if(x <= 2 && z <= 2)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //decreasing xz
+                    if(x >= 5 && z >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //increasing x decreasing z
+                    if(x <= 2 && z >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //decreasing x increasing z
+                    if(x >= 5 && z <= 2)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+                    count = 0;
+
+                    //increasing xy
+                    if(x <= 2 && y <= 1)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing xy
+                    if(x >= 5 && y >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //increasing x decreasing y
+                    if(x <= 2 && y >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing x increasing y
+                    if(x >= 5 && y <= 1)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //increasing yz
+                    if(z <= 2 && y <= 1)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing yz
+                    if(z >= 5 && y >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //increasing y decreasing z
+                    if(z >= 5 && y <= 1)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing y increasing z
+                    if(z <= 2 && y >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //increasing xyz
+                    if(z <= 2 && y <= 1 && x <= 2)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing xyz
+                    if(z >= 5 && y >= 5 && x >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z-i >= 0 && y-i >= 0 && x-i >= 0 && array[z-i][y-i][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //increasing zy decreasing x
+                    if(z <= 2 && y <= 1 && x >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing zy increasing x
+                    if(z >= 5 && y >= 5 && x <= 2)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z-i >= 0 && y-i >= 0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //increasing y decreasing xz
+                    if(z >= 5 && y <= 1 && x >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing y increasing xz
+                    if(z <= 2 && y >= 5 && x <= 2)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //increasing xy decreasing z
+                    if(z >= 5 && y <= 1 && x <= 2)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z-i >= 0 && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z-i][y+i][x+i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                    //decreasing xy increasing z
+                    if(z <= 2 && y >= 5 && x >= 5)
+                    {
+                        for(int i = 0; i<i+6; i++)
+                        {
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player)
+                                count++;
+                        }
+                    }
+                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+                    count = 0;
+
+                }
+            }
+        }
+        return grade;
     }
 
 
