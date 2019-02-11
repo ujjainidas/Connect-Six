@@ -39,6 +39,7 @@ public class AkiyamaDas extends Player
         char[][][] temp = board.getBoard();
         turnNum++;
         locBoard = board.getBoard();
+        System.out.println(locBoard[3][0][3]);
         boolean winnerPresent = true;
         int pieceCount = 0;
 
@@ -78,6 +79,9 @@ public class AkiyamaDas extends Player
 
         if(turnNum == 1 && goesFirst)
         {
+            System.out.println("************************************\t\t 3 "+ "3");
+            board.setLocation(new Location(3, 0, 3), letter);
+            locBoard = board.getBoard();
             return new Move(3, 3);
         }
 
@@ -117,6 +121,9 @@ public class AkiyamaDas extends Player
 
         }
 
+        System.out.println("************************************\t\t "+ bestMove.getMove().getX()+ " " + bestMove.getMove().getZ());
+        board.setLocation(new Location(bestMove.getX(), bestMove.getY(), bestMove.getZ()), letter);
+        locBoard = board.getBoard();
         return new Move(bestMove.getMove().getX(), bestMove.getMove().getZ());//no look ahead, just best move
     }
 
