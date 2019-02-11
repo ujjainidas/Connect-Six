@@ -5,7 +5,7 @@ import java.util.*;
 
 public class ClientMain
 {
-	public static final String ip = "T308030";
+	public static final String ip = "127.0.0.1";
 	public static final int port = 8003;
 	
 	public static int moveSleepTime 		= 0;
@@ -213,6 +213,21 @@ public class ClientMain
 				System.exit(0);
 			}
 		}
+
+//		AkiyamaDas das = new AkiyamaDas('R');
+//		Move m;
+//
+//		while(true)
+//		{
+//			m = das.getMove(board);
+//			System.out.println(m.getX() + " " + m.getZ());
+//			try
+//			{
+//				Thread.sleep(500);
+//			}catch(InterruptedException i)
+//			{}
+//		}
+
 	}
 	
 	public static char getOpponentLetter(char self)

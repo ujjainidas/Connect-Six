@@ -26,7 +26,7 @@ public class AkiyamaDas extends Player
     {
         super("AkiyamaDas",letter);
         turnNum = 0;
-        goesFirst = false;
+        goesFirst = true;
     }
 
     /**
@@ -36,85 +36,71 @@ public class AkiyamaDas extends Player
      */
     public Move getMove(Board board)
     {
-//        char[][][] temp = board.getBoard();
-//        turnNum++;
-//        locBoard = board.getBoard();
-//
-//        ArrayList<MoveGrades> moves = new ArrayList<MoveGrades>();
-//
-//        for(int i = 0; i<Board.Z_SIZE; i++)
-//        {
-//            for(int j = 0; j<Board.Y_SIZE; j++)
-//            {
-//                for(int k = 0; k<Board.X_SIZE; k++)
-//                {
-//                    if (locBoard[i][j][k] == Board.EMPTY)
-//                    {
-//                        continue;
-//                    }
-//                    else
-//                    {
-//                        if(turnNum == 1)
-//                            goesFirst = false;
-//                    }
-//                }
-//            }
-//        }
-//
-//        System.out.println(turnNum + " " + goesFirst);
-//
-//        if(turnNum == 1 && goesFirst)
-//        {
-//            return new Move(3, 3);
-//        }
-//
-//        for(int i = 0; i<Board.Z_SIZE; i++)
-//        {
-//            for (int j = 0; j < Board.X_SIZE; j++)
-//            {
-//                for(int k = 0; k < Board.Y_SIZE; k++)
-//                {
-//                    if(locBoard[i][k][j] == Board.EMPTY)
-//                    {
-//                        moves.add(new MoveGrades(new Move(j, i), k));
-//                        System.out.println("added");
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//
-//        System.out.println(moves.size());
-//
-//        int largestGrade = moves.get(0).getGrade();
-//        Move bestMove = moves.get(0);
-//        for(MoveGrades m : moves)
-//        {
-//            temp[m.getZ()][m.getY()][m.getX()] = letter;
-//            if(getGrade(temp, letter) > largestGrade)
-//            {
-//                bestMove = new Move(m.getX(), m.getZ());
-//                largestGrade = getGrade(temp, letter);
-//            }
-//
-//        }
+        char[][][] temp = board.getBoard();
+        turnNum++;
+        locBoard = board.getBoard();
 
+        ArrayList<MoveGrades> moves = new ArrayList<MoveGrades>();
 
-//        for(int i = moves.size()-1; i>=0; i++)
-//        {
-//            if(moves.get(i).getX() > 0 && locBoard[moves.get(i).getZ()][moves.get(i).getY()][moves.get(i).getX()-1] == Board.EMPTY)
-//            {
-//                if(moves.get(i).getX() < Board.X_SIZE && locBoard[moves.get(i).getZ()][moves.get(i).getY()][moves.get(i).getX()+1] == Board.EMPTY)
-//                {
-//                    if(moves.get(i).getZ() > 0 && locBoard[moves.get(i).getZ()-1][moves.get(i).getY()][moves.get(i).getX()] == Board.EMPTY)
-//                    {
-//
-//                    }
-//                }
-//            }
-//        }
+        for(int i = 0; i<Board.Z_SIZE; i++)
+        {
+            for(int j = 0; j<Board.Y_SIZE; j++)
+            {
+                for(int k = 0; k<Board.X_SIZE; k++)
+                {
+                    if (locBoard[i][j][k] == Board.EMPTY)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if(turnNum == 1)
+                            goesFirst = false;
+                    }
+                }
+            }
+        }
 
-        return new Move(0, 0);//no look ahead, just best move
+        System.out.println(turnNum + " " + goesFirst);
+
+        if(turnNum == 1 && goesFirst)
+        {
+            return new Move(3, 3);
+        }
+
+        for(int i = 0; i<Board.Z_SIZE; i++)
+        {
+            for (int j = 0; j < Board.X_SIZE; j++)
+            {
+                for(int k = 0; k < Board.Y_SIZE; k++)
+                {
+                    if(locBoard[i][k][j] == Board.EMPTY)
+                    {
+                        if(filterMoves(i, k, j))
+                            break;
+                        moves.add(new MoveGrades(new Move(j, i), k));
+                        break;
+                    }
+                }
+            }
+        }
+
+        System.out.println(moves.size());
+
+        int largestGrade = moves.get(0).getGrade();
+        Move bestMove = moves.get(0);
+        for(MoveGrades m : moves)
+        {
+            temp[m.getZ()][m.getY()][m.getX()] = letter;
+            if(getGrade(temp, letter) > largestGrade)
+            {
+                bestMove = new Move(m.getX(), m.getZ());
+                largestGrade = getGrade(temp, letter);
+            }
+
+        }
+
+        return new Move(bestMove.getX(), bestMove.getZ());//no look ahead, just best move
     }
 
     public Move calculateMove(Board board, int layers)
@@ -370,11 +356,58 @@ public class AkiyamaDas extends Player
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
-
                 }
             }
         }
         return grade;
+    }
+
+    public boolean filterMoves(int i, int k, int j)
+    {
+        //filters out bad moves
+        if(i > 0 && locBoard[i-1][k][j] == Board.EMPTY)
+        {
+            if(i < Board.Z_SIZE-1 && locBoard[i+1][k][j] == Board.EMPTY)
+            {
+                if(j > 0 && locBoard[i][k][j-1] == Board.EMPTY)
+                {
+                    if(j < Board.X_SIZE-1 && locBoard[i][k][j+1] == Board.EMPTY)
+                    {
+                        if(locBoard[i+1][k][j+1] == Board.EMPTY)
+                        {
+                            if(locBoard[i-1][k][j-1] == Board.EMPTY)
+                            {
+                                if(locBoard[i+1][k][j-1] == Board.EMPTY)
+                                {
+                                    if(locBoard[i-1][k][j+1] == Board.EMPTY)
+                                    {
+                                        if(k == 0)
+                                        {
+                                            if(locBoard[i+1][k+1][j+1] == Board.EMPTY)
+                                            {
+                                                if(locBoard[i-1][k+1][j-1] == Board.EMPTY)
+                                                {
+                                                    if(locBoard[i+1][k+1][j-1] == Board.EMPTY)
+                                                    {
+                                                        if(locBoard[i-1][k+1][j+1] == Board.EMPTY)
+                                                        {
+                                                            return true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return false;
     }
 
 
