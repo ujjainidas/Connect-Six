@@ -21,9 +21,9 @@ public class MoveGrades extends Move
         grade = 0;
     }
 
-//    public Move getMove() {
-//        return m;
-//    }
+    public Move getMove() {
+        return m;
+    }
 
     public int getGrade() {
         return grade;

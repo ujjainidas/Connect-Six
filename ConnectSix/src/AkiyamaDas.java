@@ -39,6 +39,8 @@ public class AkiyamaDas extends Player
         char[][][] temp = board.getBoard();
         turnNum++;
         locBoard = board.getBoard();
+        boolean winnerPresent = true;
+        int pieceCount = 0;
 
         ArrayList<MoveGrades> moves = new ArrayList<MoveGrades>();
 
@@ -54,14 +56,25 @@ public class AkiyamaDas extends Player
                     }
                     else
                     {
-                        if(turnNum == 1)
-                            goesFirst = false;
+                        winnerPresent = false;
+                        pieceCount++;
                     }
                 }
             }
         }
 
-        System.out.println(turnNum + " " + goesFirst);
+        if(pieceCount == 1)
+        {
+            winnerPresent = true;
+            turnNum = 1;
+        }
+
+        if(winnerPresent)
+        {
+            turnNum = 1;
+            if(pieceCount == 0)
+                goesFirst = true;
+        }
 
         if(turnNum == 1 && goesFirst)
         {
@@ -85,22 +98,26 @@ public class AkiyamaDas extends Player
             }
         }
 
-        System.out.println(moves.size());
-
-        int largestGrade = moves.get(0).getGrade();
-        Move bestMove = moves.get(0);
         for(MoveGrades m : moves)
         {
-            temp[m.getZ()][m.getY()][m.getX()] = letter;
+            System.out.println(m.getMove().getX() + " " + m.getMove().getZ() + " \t********" + m.getGrade());
+        }
+
+        int largestGrade = moves.get(0).getGrade();
+        MoveGrades bestMove = moves.get(0);
+        for(MoveGrades m : moves)
+        {
+            temp[m.getMove().getZ()][m.getY()][m.getMove().getX()] = letter;
             if(getGrade(temp, letter) > largestGrade)
             {
-                bestMove = new Move(m.getX(), m.getZ());
                 largestGrade = getGrade(temp, letter);
+                bestMove = new MoveGrades(new Move(m.getX(), m.getZ()), largestGrade);
+                temp[m.getMove().getZ()][m.getY()][m.getMove().getX()] = Board.EMPTY;
             }
 
         }
 
-        return new Move(bestMove.getX(), bestMove.getZ());//no look ahead, just best move
+        return new Move(bestMove.getMove().getX(), bestMove.getMove().getZ());//no look ahead, just best move
     }
 
     public Move calculateMove(Board board, int layers)
