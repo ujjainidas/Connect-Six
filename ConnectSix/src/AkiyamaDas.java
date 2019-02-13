@@ -118,7 +118,7 @@ public class AkiyamaDas extends Player
             oppGrade = getGrade(temp, oppLetter);
             m.setGrade(myGrade - oppGrade);
             temp[m.getMove().getZ()][m.getY()][m.getMove().getX()] = Board.EMPTY;
-            System.out.println(m.getZ() + " " + m.getY() + " " + m.getX() + " -" + m.getGrade());
+//            System.out.println(m.getZ() + " " + m.getY() + " " + m.getX() + " -" + m.getGrade());
         }
 
 //        try
@@ -162,6 +162,7 @@ public class AkiyamaDas extends Player
         int count1 = 0, count2 = 0;
         int numCheck = 0;
         int subtract = 0;
+        int twoCount = 0, threeCount = 0, fourCount = 0, fiveCount = 0;
         char opponent = (player == 'R')? 'B' : 'R';
 
         for(int z = 0; z<Board.Z_SIZE; z++)
@@ -207,6 +208,9 @@ public class AkiyamaDas extends Player
                         }
                         subtract += x-numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -214,7 +218,6 @@ public class AkiyamaDas extends Player
                     //increasing z
                         for(int i = z; i<Board.Z_SIZE; i++)
                         {
-                            System.out.println(i);
                             numCheck = i;
                             if(array[i][y][x] == player) {
                                 count1++;
@@ -238,14 +241,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(array[i][y][x] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i + 1;
                                 break;
                             }
                         }
                         subtract += z-numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -259,8 +263,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(array[z][i][x] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i + 1;
                                 break;
                             }
@@ -279,14 +281,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(array[z][i][x] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i-1;
                                 break;
                             }
                         }
                         subtract += numCheck-y;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERTICAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -305,8 +308,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -329,14 +330,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -355,8 +357,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -379,14 +379,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -405,8 +406,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -429,14 +428,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -455,8 +455,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -479,14 +477,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -505,8 +504,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -529,14 +526,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -555,8 +553,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -579,14 +575,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -605,8 +602,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -629,14 +624,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && array[z-i][y+i][x-i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -655,8 +651,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -679,14 +673,15 @@ public class AkiyamaDas extends Player
                             }
                             else if (z - i >= 0 && y+i < Board.Y_SIZE && x + i < Board.X_SIZE && array[z - i][y + i][x + i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -705,8 +700,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -728,14 +721,15 @@ public class AkiyamaDas extends Player
                             }
                             else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
@@ -754,8 +748,6 @@ public class AkiyamaDas extends Player
                             }
                             else if(z-i >= 0 && y-i >=0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == opponent)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
@@ -779,20 +771,25 @@ public class AkiyamaDas extends Player
                             }
                             else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player)
                             {
-                                System.out.println(player);
-                                System.out.println(opponent);
                                 numCheck = i - 1;
                                 break;
                             }
                         }
                         subtract += numCheck;
                     if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if((count1+count2)-1 == 3) threeCount++;
+                    else if((count1+count2)-1 == 4) fourCount++;
+                    else if((count1+count2)-1 == 5) fourCount++;
                     count1 = 0;
                     count2 = 0;
                     subtract = 0;
                 }
             }
         }
+//        grade += 20000*twoCount;
+//        grade += 20500*threeCount;
+//        grade += 30000*fourCount;
+//        grade += 30500*fiveCount;
         return grade;
     }
 
@@ -971,5 +968,49 @@ public class AkiyamaDas extends Player
     public Player freshCopy()
     {
         return new AkiyamaDas(letter);
+    }
+}
+
+class MoveGrades extends Move
+{
+    Move m;
+    int y;
+    int grade;
+
+
+    public MoveGrades(Move m, int y, int grade)
+    {
+        super(m.getX(), m.getZ());
+        this.m = m;
+        this.y = y;
+        this.grade=grade;
+    }
+
+    public MoveGrades(Move m, int y)
+    {
+        super(m.getX(), m.getZ());
+        this.m = m;
+        this.y = y;
+        grade = 0;
+    }
+
+    public Move getMove() {
+        return m;
+    }
+
+    public int getGrade() {
+        return grade;
+    }
+
+    public void setMove(Move m) {
+        this.m = m;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
+    public int getY() {
+        return y;
     }
 }
