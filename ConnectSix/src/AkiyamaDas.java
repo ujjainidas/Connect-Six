@@ -17,8 +17,8 @@ public class AkiyamaDas extends Player
 
 
     private char letter;
+    private char oppLetter;
     private String name;
-    private char[][][] locBoard;
     private boolean goesFirst;
     private int turnNum;
 
@@ -27,6 +27,7 @@ public class AkiyamaDas extends Player
         super("AkiyamaDas",letter);
         turnNum = 0;
         goesFirst = true;
+        oppLetter = (letter == 'R')? 'B' : 'R';
     }
 
     /**
@@ -38,20 +39,20 @@ public class AkiyamaDas extends Player
     {
         char[][][] temp = board.getBoard();
         turnNum++;
-        locBoard = board.getBoard();
-        System.out.println(locBoard[3][0][3]);
         boolean winnerPresent = true;
         int pieceCount = 0;
+
+//        System.out.println(board.getLocation(3, 6, 3));
 
         ArrayList<MoveGrades> moves = new ArrayList<MoveGrades>();
 
         for(int i = 0; i<Board.Z_SIZE; i++)
         {
-            for(int j = 0; j<Board.Y_SIZE; j++)
+            for(int j = 6; j>=0; j--)
             {
-                for(int k = 0; k<Board.X_SIZE; k++)
+                for(int k = 0; k < Board.X_SIZE; k++)
                 {
-                    if (locBoard[i][j][k] == Board.EMPTY)
+                    if (board.getBoard()[i][j][k] == Board.EMPTY)
                     {
                         continue;
                     }
@@ -59,6 +60,7 @@ public class AkiyamaDas extends Player
                     {
                         winnerPresent = false;
                         pieceCount++;
+//                        System.out.println("I am not empty: " + i + " " + j + " " + k + " -" +board.getBoard()[i][j][k]);
                     }
                 }
             }
@@ -79,9 +81,6 @@ public class AkiyamaDas extends Player
 
         if(turnNum == 1 && goesFirst)
         {
-            System.out.println("************************************\t\t 3 "+ "3");
-            board.setLocation(new Location(3, 0, 3), letter);
-            locBoard = board.getBoard();
             return new Move(3, 3);
         }
 
@@ -89,41 +88,62 @@ public class AkiyamaDas extends Player
         {
             for (int j = 0; j < Board.X_SIZE; j++)
             {
-                for(int k = 0; k < Board.Y_SIZE; k++)
+                for(int k = 6; k >= 0; k--)
                 {
-                    if(locBoard[i][k][j] == Board.EMPTY)
+                    if(board.getBoard()[i][k][j] == Board.EMPTY)
                     {
-                        if(filterMoves(i, k, j))
+                        if(filterMoves(i, k, j, board))
                             break;
                         moves.add(new MoveGrades(new Move(j, i), k));
                         break;
                     }
                 }
+//                for(int k = Board.Y_SIZE-1; k>0; k--)
+//                {
+//                    if(board.getLocation(j, k, i) == Board.EMPTY && (k == 0 || board.getLocation(j, k-1, i) != Board.EMPTY))
+//                    {
+//                        moves.add(new MoveGrades(new Move(j, i), k));
+//                        System.out.println(i + " " + k + " " +j);
+//                    }
+//                }
             }
         }
 
+        int myGrade = 0;
+        int oppGrade = 0;
         for(MoveGrades m : moves)
         {
-            System.out.println(m.getMove().getX() + " " + m.getMove().getZ() + " \t********" + m.getGrade());
+            temp[m.getMove().getZ()][m.getY()][m.getMove().getX()] = getLetter();
+            myGrade = getGrade(temp, getLetter());
+            oppGrade = getGrade(temp, oppLetter);
+            m.setGrade(myGrade - oppGrade);
+            temp[m.getMove().getZ()][m.getY()][m.getMove().getX()] = Board.EMPTY;
+            System.out.println(m.getZ() + " " + m.getY() + " " + m.getX() + " -" + m.getGrade());
         }
+
+//        try
+//        {
+//            Thread.sleep(2000000000);
+//        }
+//        catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.exit(0);
 
         int largestGrade = moves.get(0).getGrade();
         MoveGrades bestMove = moves.get(0);
         for(MoveGrades m : moves)
         {
-            temp[m.getMove().getZ()][m.getY()][m.getMove().getX()] = letter;
-            if(getGrade(temp, letter) > largestGrade)
+            if(m.getGrade() > largestGrade)
             {
-                largestGrade = getGrade(temp, letter);
+                largestGrade = m.getGrade();
                 bestMove = new MoveGrades(new Move(m.getX(), m.getZ()), largestGrade);
-                temp[m.getMove().getZ()][m.getY()][m.getMove().getX()] = Board.EMPTY;
             }
-
+//            System.out.println(m.getMove().getX() + " " + m.getMove().getZ() + " \t********" + m.getGrade());
         }
 
-        System.out.println("************************************\t\t "+ bestMove.getMove().getX()+ " " + bestMove.getMove().getZ());
-        board.setLocation(new Location(bestMove.getX(), bestMove.getY(), bestMove.getZ()), letter);
-        locBoard = board.getBoard();
+//        System.out.println("\n\n************************************\t\t "+ bestMove.getMove().getX()+ " " + bestMove.getMove().getZ());
         return new Move(bestMove.getMove().getX(), bestMove.getMove().getZ());//no look ahead, just best move
     }
 
@@ -140,18 +160,21 @@ public class AkiyamaDas extends Player
     {
         int grade = 0;
         int count = 0;
+        char opponent = (player == 'R')? 'B' : 'R';
 
         for(int z = 0; z<Board.Z_SIZE; z++)
         {
-            for(int y = 0; y<Board.Y_SIZE; y++)
+            for(int y = 6; y>=0; y--)
             {
                 for(int x = 0; x<Board.X_SIZE; x++)
                 {
+                    if(array[z][y][x] != player) continue;
                     //increasing x
                         for(int i = x; i<Board.X_SIZE; i++)
                         {
                             if(array[z][y][i] == player)
                                 count++;
+                            else if(array[z][y][i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
@@ -161,6 +184,7 @@ public class AkiyamaDas extends Player
                         {
                             if(array[z][y][i] == player)
                                 count++;
+                            else if(array[z][y][i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
@@ -170,6 +194,7 @@ public class AkiyamaDas extends Player
                         {
                             if(array[i][y][x] == player)
                                 count++;
+                            else if(array[i][y][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
@@ -179,24 +204,27 @@ public class AkiyamaDas extends Player
                         {
                             if(array[i][y][x] == player)
                                 count++;
+                            else if(array[i][y][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
 
                     //increasing y
-                        for(int i = y; i<Board.Y_SIZE; i++)
+                        for(int i = y; i>=0; i--)
                         {
                             if(array[z][i][x] == player)
                                 count++;
+                            else if(array[z][i][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERTICAL;
                     count = 0;
 
                     //decreasing y
-                        for(int i = y; i >= 0; i--)
+                        for(int i = y; i < Board.Y_SIZE; i++)
                         {
                             if(array[z][i][x] == player)
                                 count++;
+                            else if(array[z][i][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERTICAL;
                     count = 0;
@@ -205,8 +233,21 @@ public class AkiyamaDas extends Player
                         for(int i = 0; i<8; i++)
                         {
                             if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == player)
+                            {
                                 count++;
+//                                System.out.println("I added: " + array[x+i][y][z+i]);
+//                                System.out.println(x+i);
+//                                System.out.println(y);
+//                                System.out.println(z+i);
+//                                System.out.println(i);
+//                                System.out.println(player + "\n\n");
+                            }
+                            else if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == opponent) break;
                         }
+//                        System.out.println(array[x+1][y][z+1]);
+//                        System.out.println(x+1);
+//                        System.out.println(y);
+//                        System.out.println(z+1);
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
 
@@ -215,6 +256,7 @@ public class AkiyamaDas extends Player
                         {
                             if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == player)
                                 count++;
+                            else if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
@@ -224,6 +266,7 @@ public class AkiyamaDas extends Player
                         {
                             if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == player)
                                 count++;
+                            else if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
@@ -233,6 +276,7 @@ public class AkiyamaDas extends Player
                         {
                             if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == player)
                                 count++;
+                            else if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*FLAT;
                     count = 0;
@@ -240,8 +284,9 @@ public class AkiyamaDas extends Player
                     //increasing xy
                         for(int i = 0; i<8; i++)
                         {
-                            if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == player)
+                            if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == player)
                                 count++;
+                            else if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -249,8 +294,9 @@ public class AkiyamaDas extends Player
                     //decreasing xy
                         for(int i = 0; i<8; i++)
                         {
-                            if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == player)
+                            if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == player)
                                 count++;
+                            else if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -258,8 +304,9 @@ public class AkiyamaDas extends Player
                     //increasing x decreasing y
                         for(int i = 0; i<8; i++)
                         {
-                            if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == player)
+                            if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == player)
                                 count++;
+                            else if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -267,8 +314,9 @@ public class AkiyamaDas extends Player
                     //decreasing x increasing y
                         for(int i = 0; i<8; i++)
                         {
-                            if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == player)
+                            if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == player)
                                 count++;
+                            else if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -276,8 +324,9 @@ public class AkiyamaDas extends Player
                     //increasing yz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == player)
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == player)
                                 count++;
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -285,8 +334,9 @@ public class AkiyamaDas extends Player
                     //decreasing yz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == player)
+                            if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == player)
                                 count++;
+                            else if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -294,8 +344,9 @@ public class AkiyamaDas extends Player
                     //increasing y decreasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == player)
+                            if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == player)
                                 count++;
+                            else if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -303,8 +354,9 @@ public class AkiyamaDas extends Player
                     //decreasing y increasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == player)
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == player)
                                 count++;
+                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -312,8 +364,9 @@ public class AkiyamaDas extends Player
                     //increasing xyz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == player)
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == player)
                                 count++;
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -321,8 +374,9 @@ public class AkiyamaDas extends Player
                     //decreasing xyz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y-i >= 0 && x-i >= 0 && array[z-i][y-i][x-i] == player)
+                            if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && array[z-i][y+i][x-i] == player)
                                 count++;
+                            else if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && array[z-i][y+i][x-i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -330,8 +384,9 @@ public class AkiyamaDas extends Player
                     //increasing zy decreasing x
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player)
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player)
                                 count++;
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -339,8 +394,9 @@ public class AkiyamaDas extends Player
                     //decreasing zy increasing x
                         for(int i = 0; i<8; i++)
                         {
-                            if (z - i >= 0 && y - i >= 0 && x + i < Board.X_SIZE && array[z - i][y - i][x + i] == player)
+                            if (z - i >= 0 && y+i < Board.Y_SIZE && x + i < Board.X_SIZE && array[z - i][y + i][x + i] == player)
                                 count++;
+                            else if (z - i >= 0 && y+i < Board.Y_SIZE && x + i < Board.X_SIZE && array[z - i][y + i][x + i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -350,6 +406,7 @@ public class AkiyamaDas extends Player
                         {
                             if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player)
                                 count++;
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -357,8 +414,9 @@ public class AkiyamaDas extends Player
                     //decreasing y increasing xz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == player)
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == player)
                                 count++;
+                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == opponent) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -366,8 +424,9 @@ public class AkiyamaDas extends Player
                     //increasing xy decreasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z-i][y+i][x+i] == player)
+                            if(z-i >= 0 && y-i >=0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == player)
                                 count++;
+                            else if(z-i >= 0 && y-i >=0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == opponent)break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -375,8 +434,9 @@ public class AkiyamaDas extends Player
                     //decreasing xy increasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player)
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player)
                                 count++;
+                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player) break;
                         }
                     grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
                     count = 0;
@@ -386,41 +446,28 @@ public class AkiyamaDas extends Player
         return grade;
     }
 
-    public boolean filterMoves(int i, int k, int j)
+    public boolean filterMoves(int z, int y, int x, Board board)
     {
+        if(y != Board.Y_SIZE-1) return false;
+
         //filters out bad moves
-        if(i > 0 && locBoard[i-1][k][j] == Board.EMPTY)
+        if(z > 0 && board.getBoard()[z-1][y][x] == Board.EMPTY)
         {
-            if(i < Board.Z_SIZE-1 && locBoard[i+1][k][j] == Board.EMPTY)
+            if(z < Board.Z_SIZE-1 && board.getBoard()[z+1][y][x] == Board.EMPTY)
             {
-                if(j > 0 && locBoard[i][k][j-1] == Board.EMPTY)
+                if(x > 0 && board.getBoard()[z][y][x-1] == Board.EMPTY)
                 {
-                    if(j < Board.X_SIZE-1 && locBoard[i][k][j+1] == Board.EMPTY)
+                    if(x < Board.X_SIZE-1 && board.getBoard()[z][y][x+1] == Board.EMPTY)
                     {
-                        if(locBoard[i+1][k][j+1] == Board.EMPTY)
+                        if(board.getBoard()[z+1][y][x+1] == Board.EMPTY)
                         {
-                            if(locBoard[i-1][k][j-1] == Board.EMPTY)
+                            if(board.getBoard()[z-1][y][x-1] == Board.EMPTY)
                             {
-                                if(locBoard[i+1][k][j-1] == Board.EMPTY)
+                                if(board.getBoard()[z+1][y][x-1] == Board.EMPTY)
                                 {
-                                    if(locBoard[i-1][k][j+1] == Board.EMPTY)
+                                    if(board.getBoard()[z-1][y][x+1] == Board.EMPTY)
                                     {
-                                        if(k == 0)
-                                        {
-                                            if(locBoard[i+1][k+1][j+1] == Board.EMPTY)
-                                            {
-                                                if(locBoard[i-1][k+1][j-1] == Board.EMPTY)
-                                                {
-                                                    if(locBoard[i+1][k+1][j-1] == Board.EMPTY)
-                                                    {
-                                                        if(locBoard[i-1][k+1][j+1] == Board.EMPTY)
-                                                        {
-                                                            return true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        return true;
                                     }
                                 }
                             }
@@ -430,6 +477,134 @@ public class AkiyamaDas extends Player
             }
         }
 
+        if(z == 0 && x == 0)
+        {
+            if(board.getBoard()[z+1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x+1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z+1][y][x+1] == Board.EMPTY)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if(z == Board.Z_SIZE-1 && x == 0)
+        {
+            if(board.getBoard()[z-1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x+1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z-1][y][x+1] == Board.EMPTY)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if(z == 0 && x == Board.X_SIZE-1)
+        {
+            if(board.getBoard()[z+1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x-1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z+1][y][x-1] == Board.EMPTY)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if(z == Board.Z_SIZE-1 && x == Board.X_SIZE-1)
+        {
+            if(board.getBoard()[z-1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x-1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z-1][y][x-1] == Board.EMPTY)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if(z == 0)
+        {
+            if(board.getBoard()[z+1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x+1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z+1][y][x+1] == Board.EMPTY)
+                    {
+                        if(board.getBoard()[z+1][y][x-1] == Board.EMPTY)
+                        {
+                            if(board.getBoard()[z][y][x-1] == Board.EMPTY)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if(z == Board.Z_SIZE-1)
+        {
+            if(board.getBoard()[z-1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x+1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z-1][y][x+1] == Board.EMPTY)
+                    {
+                        if(board.getBoard()[z-1][y][x-1] == Board.EMPTY)
+                        {
+                            if(board.getBoard()[z][y][x-1] == Board.EMPTY)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if(x == 0)
+        {
+            if(board.getBoard()[z+1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x+1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z+1][y][x+1] == Board.EMPTY)
+                    {
+                        if(board.getBoard()[z-1][y][x+1] == Board.EMPTY)
+                        {
+                            if(board.getBoard()[z-1][y][x] == Board.EMPTY)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if(x == Board.X_SIZE-1)
+        {
+            if(board.getBoard()[z+1][y][x] == Board.EMPTY)
+            {
+                if(board.getBoard()[z][y][x-1] == Board.EMPTY)
+                {
+                    if(board.getBoard()[z+1][y][x-1] == Board.EMPTY)
+                    {
+                        if(board.getBoard()[z-1][y][x-1] == Board.EMPTY)
+                        {
+                            if(board.getBoard()[z-1][y][x] == Board.EMPTY)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         return false;
     }

@@ -6,11 +6,11 @@ import java.util.*;
 public class ClientMain
 {
     //T308030
-	public static final String ip = "T308030";
+	public static final String ip = "127.0.0.1";
 	public static final int port = 8003;
 	
-	public static int moveSleepTime 		= 0;
-	public static int endSleepTime 			= 5000;
+	public static int moveSleepTime 		= 2000;
+	public static int endSleepTime 			= 1000;
 	public static int matchInfoSleepTime 	= 0;
 	public static PlayerScores scores=null;
 	
@@ -24,8 +24,8 @@ public class ClientMain
 		DisplayScreenV_AI ds = new DisplayScreenV_AI(board);
 		int mode = 0;
 
-		//PlayerInt myAIasRed = new HumanPlayer('R',"Tully");
-		//PlayerInt myAIasBlue = new HumanPlayer('B',"Tully");
+//		Player myAIasRed = new HumanPlayer("Tully",'R');
+//		Player myAIasBlue = new HumanPlayer("Tully",'R');
 		Player myAIasRed = new AkiyamaDas('R');
 		Player myAIasBlue = new AkiyamaDas('B');
 		String myAI_Name = myAIasRed.getName();

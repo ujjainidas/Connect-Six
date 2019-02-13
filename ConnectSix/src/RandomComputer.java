@@ -17,9 +17,9 @@ public class RandomComputer extends Player
 		}while(board.isFull(m));
 		return m;
 	}
-	
 
-	
+
+
 	public Player freshCopy()
 	{
 		return new RandomComputer(getLetter());
