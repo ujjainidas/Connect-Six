@@ -47,6 +47,8 @@ public class Servers_Listener implements Runnable
 		this.os			= os;
 		
 		// Adds testing AIs
+		testingAIsAsRed.add(new AkiyamaDas('R'));
+		testingAIsAsBlue.add(new AkiyamaDas('B'));
 		testingAIsAsRed.add(new RandomComputer('R'));
 		testingAIsAsBlue.add(new RandomComputer('B'));
 

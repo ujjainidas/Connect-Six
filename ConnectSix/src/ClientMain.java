@@ -9,7 +9,7 @@ public class ClientMain
 	public static final String ip = "127.0.0.1";
 	public static final int port = 8003;
 	
-	public static int moveSleepTime 		= 2000;
+	public static int moveSleepTime 		= 100;
 	public static int endSleepTime 			= 1000;
 	public static int matchInfoSleepTime 	= 0;
 	public static PlayerScores scores=null;

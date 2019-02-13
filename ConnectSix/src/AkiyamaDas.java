@@ -26,7 +26,7 @@ public class AkiyamaDas extends Player
     {
         super("AkiyamaDas",letter);
         turnNum = 0;
-        goesFirst = true;
+        goesFirst = false;
         oppLetter = (letter == 'R')? 'B' : 'R';
     }
 
@@ -159,7 +159,9 @@ public class AkiyamaDas extends Player
     public int getGrade(char[][][] array, char player)
     {
         int grade = 0;
-        int count = 0;
+        int count1 = 0, count2 = 0;
+        int numCheck = 0;
+        int subtract = 0;
         char opponent = (player == 'R')? 'B' : 'R';
 
         for(int z = 0; z<Board.Z_SIZE; z++)
@@ -168,278 +170,626 @@ public class AkiyamaDas extends Player
             {
                 for(int x = 0; x<Board.X_SIZE; x++)
                 {
-                    if(array[z][y][x] != player) continue;
+                    if(array[z][y][x] != player) {
+                        continue;
+                    }
                     //increasing x
                         for(int i = x; i<Board.X_SIZE; i++)
                         {
-                            if(array[z][y][i] == player)
-                                count++;
-                            else if(array[z][y][i] == opponent) break;
+                            numCheck = i;
+                            if(array[z][y][i] == player) {
+                                count1++;
+                            }
+                            else if(array[z][y][i] == opponent)
+                            {
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+
+                        subtract += numCheck-x;
+//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    count = 0;
 
                     //decreasing x
                         for(int i = x; i >= 0; i--)
                         {
+                            numCheck = i;
                             if(array[z][y][i] == player)
-                                count++;
-                            else if(array[z][y][i] == opponent) break;
+                            {
+                                count2++;
+                            }
+                            else if(array[z][y][i] == opponent)
+                            {
+                                numCheck = i + 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+                        subtract += x-numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing z
                         for(int i = z; i<Board.Z_SIZE; i++)
                         {
-                            if(array[i][y][x] == player)
-                                count++;
-                            else if(array[i][y][x] == opponent) break;
+                            System.out.println(i);
+                            numCheck = i;
+                            if(array[i][y][x] == player) {
+                                count1++;
+                            }
+                            else if(array[i][y][x] == opponent)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+                        subtract += numCheck-z;
+//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    count = 0;
 
                     //decreasing z
                         for(int i = z; i >= 0; i--)
                         {
-                            if(array[i][y][x] == player)
-                                count++;
-                            else if(array[i][y][x] == opponent) break;
+                            numCheck = i;
+                            if(array[i][y][x] == player) {
+                                count2++;
+                            }
+                            else if(array[i][y][x] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i + 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+                        subtract += z-numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing y
                         for(int i = y; i>=0; i--)
                         {
-                            if(array[z][i][x] == player)
-                                count++;
-                            else if(array[z][i][x] == opponent) break;
+                            numCheck=i;
+                            if(array[z][i][x] == player) {
+                                count1++;
+                            }
+                            else if(array[z][i][x] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i + 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERTICAL;
-                    count = 0;
+                        subtract += y-numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERTICAL;
+//                    count = 0;
 
                     //decreasing y
                         for(int i = y; i < Board.Y_SIZE; i++)
                         {
+                            numCheck = i;
                             if(array[z][i][x] == player)
-                                count++;
-                            else if(array[z][i][x] == opponent) break;
+                            {
+                                count2++;
+                            }
+                            else if(array[z][i][x] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i-1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERTICAL;
-                    count = 0;
+                        subtract += numCheck-y;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERTICAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing xz
                         for(int i = 0; i<8; i++)
                         {
-                            if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == player)
+                            numCheck = i;
+                            if(x+i >= Board.X_SIZE || z+i >= Board.Z_SIZE)
                             {
-                                count++;
-//                                System.out.println("I added: " + array[x+i][y][z+i]);
-//                                System.out.println(x+i);
-//                                System.out.println(y);
-//                                System.out.println(z+i);
-//                                System.out.println(i);
-//                                System.out.println(player + "\n\n");
+                                numCheck = i-1;
+                                break;
                             }
-                            else if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == opponent) break;
+                            if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == player) {
+                                count1++;
+                            }
+                            else if(x+i < Board.X_SIZE && z+i < Board.Z_SIZE && array[z+i][y][x+i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-//                        System.out.println(array[x+1][y][z+1]);
-//                        System.out.println(x+1);
-//                        System.out.println(y);
-//                        System.out.println(z+1);
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    count = 0;
 
                     //decreasing xz
                         for(int i = 0; i<8; i++)
                         {
-                            if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == player)
-                                count++;
-                            else if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == opponent) break;
+                            numCheck = i;
+                            if(x-i <0 || z-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == player) {
+                                count2++;
+                            }
+                            else if(x-i >= 0 && z-i >= 0 && array[z-i][y][x-i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing x decreasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == player)
-                                count++;
-                            else if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == opponent) break;
+                            numCheck = i;
+                            if(x+i >= Board.X_SIZE || z-i < 0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == player) {
+                                count1++;
+                            }
+                            else if(x+i < Board.X_SIZE && z-i >= 0 && array[z-i][y][x+i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    count = 0;
 
                     //decreasing x increasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == player)
-                                count++;
-                            else if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == opponent) break;
+                            numCheck = i;
+                            if(x-i <0 || z+i >= Board.Z_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == player) {
+                                count2++;
+                            }
+                            else if(x-i >= 0 && z+i < Board.Z_SIZE && array[z+i][y][x-i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*FLAT;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing xy
                         for(int i = 0; i<8; i++)
                         {
-                            if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == player)
-                                count++;
-                            else if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == opponent) break;
+                            numCheck = i;
+                            if(x+i >= Board.X_SIZE || y-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == player) {
+                                count1++;
+                            }
+                            else if(x+i < Board.X_SIZE && y-i >= 0 && array[z][y-i][x+i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    count = 0;
 
                     //decreasing xy
                         for(int i = 0; i<8; i++)
                         {
-                            if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == player)
-                                count++;
-                            else if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == opponent) break;
+                            numCheck = i;
+                            if(x-i <0 || y+i >= Board.Y_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == player) {
+                                count2++;
+                            }
+                            else if(x-i >= 0 && y+i < Board.Y_SIZE && array[z][y+i][x-i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing x decreasing y
                         for(int i = 0; i<8; i++)
                         {
-                            if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == player)
-                                count++;
-                            else if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == opponent) break;
+                            numCheck = i;
+                            if(x+i >= Board.X_SIZE || y+i >= Board.Y_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == player) {
+                                count1++;
+                            }
+                            else if(x+i < Board.X_SIZE && y+i < Board.Y_SIZE && array[z][y+i][x+i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    count = 0;
 
                     //decreasing x increasing y
                         for(int i = 0; i<8; i++)
                         {
-                            if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == player)
-                                count++;
-                            else if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == opponent) break;
+                            numCheck = i;
+                            if(x-i <0|| y-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == player) {
+                                count2++;
+                            }
+                            else if(x-i >= 0 && y-i >= 0 && array[z][y-i][x-i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing yz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == player)
-                                count++;
-                            else if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == opponent) break;
+                            numCheck = i;
+                            if(z+i >= Board.Z_SIZE || y-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == player) {
+                                count1++;
+                            }
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && array[z+i][y-i][x] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    count = 0;
 
                     //decreasing yz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == player)
-                                count++;
-                            else if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == opponent) break;
+                            numCheck = i;
+                            if(z-i <0 || y+i >= Board.Y_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == player) {
+                                count2++;
+                            }
+                            else if(z-i >= 0 && y+i < Board.Y_SIZE && array[z-i][y+i][x] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing y decreasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == player)
-                                count++;
-                            else if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == opponent) break;
+                            numCheck = i;
+                            if(z-i <0|| y-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == player) {
+                                count1++;
+                            }
+                            else if(z-i >= 0 && y-i >= 0 && array[z-i][y-i][x] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    count = 0;
 
                     //decreasing y increasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == player)
-                                count++;
-                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == opponent) break;
+                            numCheck = i;
+                            if(z+i >= Board.Z_SIZE || y+i >= Board.Y_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == player) {
+                                count2++;
+                            }
+                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && array[z+i][y+i][x] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing xyz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == player)
-                                count++;
-                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == opponent) break;
+                            numCheck = i;
+                            if(z+i >= Board.Z_SIZE || y-i <0 || x+i >= Board.X_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == player) {
+                                count1++;
+                            }
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x+i < Board.X_SIZE && array[z+i][y-i][x+i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    count = 0;
 
                     //decreasing xyz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && array[z-i][y+i][x-i] == player)
-                                count++;
-                            else if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && array[z-i][y+i][x-i] == opponent) break;
+                            numCheck = i;
+                            if(z-i <0|| y+i >= Board.Y_SIZE || x-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && array[z-i][y+i][x-i] == player) {
+                                count2++;
+                            }
+                            else if(z-i >= 0 && y+i < Board.Y_SIZE && x-i >= 0 && array[z-i][y+i][x-i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing zy decreasing x
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player)
-                                count++;
-                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent) break;
+                            numCheck = i;
+                            if(z+i >= Board.Z_SIZE || y-i <0 || x-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player) {
+                                count1++;
+                            }
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    count = 0;
 
                     //decreasing zy increasing x
                         for(int i = 0; i<8; i++)
                         {
-                            if (z - i >= 0 && y+i < Board.Y_SIZE && x + i < Board.X_SIZE && array[z - i][y + i][x + i] == player)
-                                count++;
-                            else if (z - i >= 0 && y+i < Board.Y_SIZE && x + i < Board.X_SIZE && array[z - i][y + i][x + i] == opponent) break;
+                            numCheck = i;
+                            if(z-i <0 || y+i >= Board.Y_SIZE || x+i >= Board.X_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if (z - i >= 0 && y+i < Board.Y_SIZE && x + i < Board.X_SIZE && array[z - i][y + i][x + i] == player) {
+                                count2++;
+                            }
+                            else if (z - i >= 0 && y+i < Board.Y_SIZE && x + i < Board.X_SIZE && array[z - i][y + i][x + i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing y decreasing xz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player)
-                                count++;
-                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent) break;
+                            numCheck = i;
+                            if(z+i >= Board.Z_SIZE || y-i <0 || x-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == player) {
+                                count1++;
+                            }
+                            else if(z+i < Board.Z_SIZE && y-i >= 0 && x-i >= 0 && array[z+i][y-i][x-i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+
 
                     //decreasing y increasing xz
                         for(int i = 0; i<8; i++)
                         {
-                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == player)
-                                count++;
-                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == opponent) break;
+                            numCheck = i;
+                            if(z+i >= Board.Z_SIZE || y+i >= Board.Y_SIZE || x+i >= Board.X_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == player) {
+                                count2++;
+                            }
+                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x+i < Board.X_SIZE && array[z+i][y+i][x+i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
 
                     //increasing xy decreasing z
                         for(int i = 0; i<8; i++)
                         {
-                            if(z-i >= 0 && y-i >=0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == player)
-                                count++;
-                            else if(z-i >= 0 && y-i >=0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == opponent)break;
+                            numCheck = i;
+                            if(z-i < 0 || y-i <0 || x+i >= Board.X_SIZE)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
+                            if(z-i >= 0 && y-i >=0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == player) {
+                                count1++;
+                            }
+                            else if(z-i >= 0 && y-i >=0 && x+i < Board.X_SIZE && array[z-i][y-i][x+i] == opponent)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    count = 0;
 
                     //decreasing xy increasing z
                         for(int i = 0; i<8; i++)
                         {
+                            numCheck = i;
+                            if(z+i >= Board.Z_SIZE || y+i >= Board.Y_SIZE || x-i <0)
+                            {
+                                numCheck = i-1;
+                                break;
+                            }
                             if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player)
-                                count++;
-                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player) break;
+                            {
+                                count2++;
+                            }
+                            else if(z+i < Board.Z_SIZE && y+i < Board.Y_SIZE && x-i >= 0 && array[z+i][y+i][x-i] == player)
+                            {
+                                System.out.println(player);
+                                System.out.println(opponent);
+                                numCheck = i - 1;
+                                break;
+                            }
                         }
-                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
-                    count = 0;
+                        subtract += numCheck;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    count1 = 0;
+                    count2 = 0;
+                    subtract = 0;
                 }
             }
         }
@@ -610,6 +960,13 @@ public class AkiyamaDas extends Player
     }
 
 
+//    public ArrayList<MoveGrades> bestGrades(ArrayList<MoveGrades> moves)
+//    {
+//        for(int i = 0; i<moves.size(); i++)
+//        {
+//
+//        }
+//    }
 
     public Player freshCopy()
     {
