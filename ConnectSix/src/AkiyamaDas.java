@@ -7,6 +7,7 @@ public class AkiyamaDas extends Player
     public static final int FLAT = 4;
     public static final int VERTICAL = 3;
     public static final int VERT_DIAGONAL = 2;
+    
 
 //    public static final int ONE = 1;
 //    public static final int TWO = 10;
@@ -163,7 +164,18 @@ public class AkiyamaDas extends Player
         int numCheck = 0;
         int subtract = 0;
         int twoCount = 0, threeCount = 0, fourCount = 0, fiveCount = 0;
+        int flat = 0, vert = 0, vert_diag = 0;
         char opponent = (player == 'R')? 'B' : 'R';
+        if(opponent == getLetter())
+        {
+            flat = vert = vert_diag = FLAT;
+        }
+        else
+        {
+            flat = 4;
+            vert = 3;
+            vert_diag = 2;
+        }
 
         for(int z = 0; z<Board.Z_SIZE; z++)
         {
@@ -189,7 +201,7 @@ public class AkiyamaDas extends Player
                         }
 
                         subtract += numCheck-x;
-//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    grade +=(int)(Math.pow(10, count-1))*flat;
 //                    count = 0;
 
                     //decreasing x
@@ -207,7 +219,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += x-numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*flat;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -229,7 +241,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck-z;
-//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    grade +=(int)(Math.pow(10, count-1))*flat;
 //                    count = 0;
 
                     //decreasing z
@@ -246,7 +258,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += z-numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*flat;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -268,7 +280,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += y-numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERTICAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert;
 //                    count = 0;
 
                     //decreasing y
@@ -286,7 +298,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck-y;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERTICAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -313,7 +325,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    grade +=(int)(Math.pow(10, count-1))*flat;
 //                    count = 0;
 
                     //decreasing xz
@@ -335,7 +347,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*flat;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -362,7 +374,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*FLAT;
+//                    grade +=(int)(Math.pow(10, count-1))*flat;
 //                    count = 0;
 
                     //decreasing x increasing z
@@ -384,7 +396,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*FLAT;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*flat;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -411,7 +423,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert_diag;
 //                    count = 0;
 
                     //decreasing xy
@@ -433,7 +445,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -460,7 +472,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert_diag;
 //                    count = 0;
 
                     //decreasing x increasing y
@@ -482,7 +494,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -509,7 +521,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert_diag;
 //                    count = 0;
 
                     //decreasing yz
@@ -531,7 +543,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -558,7 +570,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert_diag;
 //                    count = 0;
 
                     //decreasing y increasing z
@@ -580,7 +592,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -607,7 +619,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert_diag;
 //                    count = 0;
 
                     //decreasing xyz
@@ -629,7 +641,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -656,7 +668,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert_diag;
 //                    count = 0;
 
                     //decreasing zy increasing x
@@ -678,7 +690,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -726,7 +738,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -753,7 +765,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-//                    grade +=(int)(Math.pow(10, count-1))*VERT_DIAGONAL;
+//                    grade +=(int)(Math.pow(10, count-1))*vert_diag;
 //                    count = 0;
 
                     //decreasing xy increasing z
@@ -776,7 +788,7 @@ public class AkiyamaDas extends Player
                             }
                         }
                         subtract += numCheck;
-                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*VERT_DIAGONAL;
+                    if(subtract >= 5) grade +=(int)(Math.pow(10, (count1 + count2)-2))*vert_diag;
                     if((count1+count2)-1 == 3) threeCount++;
                     else if((count1+count2)-1 == 4) fourCount++;
                     else if((count1+count2)-1 == 5) fourCount++;
@@ -967,7 +979,7 @@ public class AkiyamaDas extends Player
 
     public Player freshCopy()
     {
-        return new AkiyamaDas(letter);
+        return new AkiyamaDas(getLetter());
     }
 }
 
